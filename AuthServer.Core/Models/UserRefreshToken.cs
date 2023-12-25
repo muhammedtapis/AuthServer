@@ -8,8 +8,8 @@ namespace AuthServer.Core.Models
 {
     public class UserRefreshToken
     {
-        public string UserId { get; set; }
-        public string Code { get; set; }
-        public DateTime Expiration { get; set; }
+        public string UserId { get; set; } //refresh token kime ait olaca ?
+        public string Code { get; set; } //token kendisi kodu yani
+        public DateTime Expiration { get; set; } //token süresi
     }
 }

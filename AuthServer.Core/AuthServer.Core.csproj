@@ -10,10 +10,4 @@
     <ProjectReference Include="..\SharedLibrary\SharedLibrary.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="UnitOfWorks\" />
-    <Folder Include="Services\" />
-    <Folder Include="Repositories\" />
-  </ItemGroup>
-
 </Project>
