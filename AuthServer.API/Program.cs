@@ -1,6 +1,16 @@
+using AuthServer.Core.Configuration;
+using SharedLibrary.Configuration;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+//appsettingsteki TokenOptions ve CustomTOkenOptions sýnýfýný eþleþtirdik bu sayede appsettingsdeki verilere ulaþýcaz.
+//CustomTokenOptions sýnýfý üzerinden,tabi ki DI olarka geçtikten sonra
+builder.Services.Configure<CustomTokenOptions>(builder.Configuration.GetSection("TokenOptions"));
+
+//client appsettings ayarlarý ile client sýnýfý eþleme
+builder.Services.Configure<Client>(builder.Configuration.GetSection("Clients"));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -17,7 +17,7 @@ namespace AuthServer.Core.Services
 
         Task<ResponseDTO<TDto>> AddAsync(TDto dto);
 
-        Task<ResponseDTO<NoContentDTO>> UpdateAsync(TDto dto);
+        Task<ResponseDTO<NoContentDTO>> UpdateAsync(TDto dto, int id);
 
         Task<ResponseDTO<NoContentDTO>> RemoveAsync(int id);
 
