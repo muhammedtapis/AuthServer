@@ -35,10 +35,10 @@ namespace AuthServer.Service.Services
                 return ResponseDTO<UserAppDTO>.Fail(StatusCodes.Status400BadRequest, new ErrorDTO(errors, true));
             }
 
-            return ResponseDTO<UserAppDTO>.Success(StatusCodes.Status201Created, ObjectMapper.Mapper.Map<UserAppDTO>(result));
+            return ResponseDTO<UserAppDTO>.Success(StatusCodes.Status201Created, ObjectMapper.Mapper.Map<UserAppDTO>(user));
         }
 
-        public async Task<ResponseDTO<UserAppDTO>> GetUserByName(string userName)
+        public async Task<ResponseDTO<UserAppDTO>> GetUserByNameAsync(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
             if (user == null)

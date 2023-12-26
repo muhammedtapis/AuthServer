@@ -78,9 +78,9 @@ namespace AuthServer.Service.Services
         public TokenDTO CreateToken(UserApp user)
         {
             //token ömrünü belirle şuanki zamanı al ve appsettingsten gelen Accesstokenexpiration kadar dk ekle.
-            var accessTokenExpiration = DateTime.UtcNow.AddMinutes(_customTokenOptions.AccessTokenExpiration);
+            var accessTokenExpiration = DateTime.Now.AddMinutes(_customTokenOptions.AccessTokenExpiration);
 
-            var refreshTokenExpiration = DateTime.UtcNow.AddMinutes(_customTokenOptions.RefreshTokenExpiration);
+            var refreshTokenExpiration = DateTime.Now.AddMinutes(_customTokenOptions.RefreshTokenExpiration);
 
             //imzayı al security key
             var securityKey = SignService.GetSymmetricSecurityKey(_customTokenOptions.SecurityKey);
@@ -114,7 +114,7 @@ namespace AuthServer.Service.Services
         public ClientTokenDTO CreateTokenByClient(Client client)
         {
             //token ömrünü belirle şuanki zamanı al ve appsettingsten gelen Accesstokenexpiration kadar dk ekle.
-            var accessTokenExpiration = DateTime.UtcNow.AddMinutes(_customTokenOptions.AccessTokenExpiration);
+            var accessTokenExpiration = DateTime.Now.AddMinutes(_customTokenOptions.AccessTokenExpiration);
 
             //imzayı al security key
             var securityKey = SignService.GetSymmetricSecurityKey(_customTokenOptions.SecurityKey);

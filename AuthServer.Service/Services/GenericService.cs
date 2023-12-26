@@ -71,13 +71,20 @@ namespace AuthServer.Service.Services
         {
             //getbyId metodunda memoryde track edilmiyor eğer edilseydi gelen dto ve bu metodun sonucu iki aynı idye sahip
             //entity modified edilmeye çalışılacaktı
-            var entity = _genericRepository.GetByIdAsync(id);
+            var entity = await _genericRepository.GetByIdAsync(id);
             if (entity == null)
             {
                 return ResponseDTO<NoContentDTO>.Fail(StatusCodes.Status404NotFound, $"{id} not found!", true);
             }
-            var updatedEntity = ObjectMapper.Mapper.Map<TEntity>(dto);
-            _genericRepository.Update(updatedEntity);
+            //Map.<source type ,destination type>.(source,destination)
+            ObjectMapper.Mapper.Map<TDto, TEntity>(dto, entity);
+            //yeni instance oluşturmadan mevcut entity üzerine yani gtbyid metodundan gelen entity üzerinde değişiklik yaptığımzda saveleyince
+            //update edilmiş oluyor.
+
+            //eskiden böyle yazıyoduk ama burada tracking sorunu var yukarıdaki gibi yapıp
+            //gelen veriyi getbyid metoduyla çektiğin veriyle direkt mapliyorsun böylelikle track sorunu ortadan kalkıyor
+            //await _genericRepository.Update(updatedEntity);
+
             await _unitOfWork.CommitAsync();
             return ResponseDTO<NoContentDTO>.Success(StatusCodes.Status204NoContent);
         }

@@ -61,17 +61,21 @@ namespace AuthServer.Service.Services
                 await _userRefreshRepository.AddAsync(new UserRefreshToken()
                 { UserId = user.Id, Code = token.RefreshToken, Expiration = token.RefreshTokenExpiration });
             }
-            userRefreshToken.Code = token.RefreshToken;
-            userRefreshToken.Expiration = token.RefreshTokenExpiration;
+            else
+            {
+                userRefreshToken.Code = token.RefreshToken;
+                userRefreshToken.Expiration = token.RefreshTokenExpiration;
+            }
 
             await _unitOfWork.CommitAsync();
 
             return ResponseDTO<TokenDTO>.Success(StatusCodes.Status201Created, token);
         }
 
-        public ResponseDTO<ClientTokenDTO> CreateTokenByClientAsync(ClientLoginDTO clientLoginDto)
+        public ResponseDTO<ClientTokenDTO> CreateTokenByClient(ClientLoginDTO clientLoginDto)
         {
             //id ve secret doğru mu apsettingstekilerle aynı mı ona bak
+            //appsettingsteki isimler ile Client conf. sınıfındaki property isimleri aynı olmayınca MAPLEMİYOR!!!
             var client = _clients.SingleOrDefault(x => x.ClientId == clientLoginDto.ClientId && x.ClientSecret == clientLoginDto.ClientSecret);
             if (client == null)
             {
@@ -83,10 +87,10 @@ namespace AuthServer.Service.Services
             return ResponseDTO<ClientTokenDTO>.Success(StatusCodes.Status201Created, token);
         }
 
-        public async Task<ResponseDTO<TokenDTO>> CreateTokenByRefreshTokenAsync(string refreshToken)
+        public async Task<ResponseDTO<TokenDTO>> CreateTokenByRefreshTokenAsync(RefreshTokenDTO refreshTokenDTO)
         {
             //refresh token var mı önce onu kontrol
-            var isExistRefreshToken = _userRefreshRepository.Where(x => x.Code == refreshToken).FirstOrDefault();
+            var isExistRefreshToken = _userRefreshRepository.Where(x => x.Code == refreshTokenDTO.RefreshTokenCode).FirstOrDefault();
             if (isExistRefreshToken == null)
             {
                 return ResponseDTO<TokenDTO>.Fail(StatusCodes.Status400BadRequest, "Refresh token bulunamadı", true);
@@ -108,9 +112,9 @@ namespace AuthServer.Service.Services
             return ResponseDTO<TokenDTO>.Success(StatusCodes.Status201Created, tokenDto);
         }
 
-        public async Task<ResponseDTO<NoContentDTO>> RevokeRefreshTokenAsync(string refreshToken)
+        public async Task<ResponseDTO<NoContentDTO>> RevokeRefreshTokenAsync(RefreshTokenDTO refreshTokenDTO)
         {
-            var isExisRefreshToken = await _userRefreshRepository.Where(x => x.Code == refreshToken).FirstOrDefaultAsync();
+            var isExisRefreshToken = await _userRefreshRepository.Where(x => x.Code == refreshTokenDTO.RefreshTokenCode).FirstOrDefaultAsync();
             if (isExisRefreshToken == null)
             {
                 return ResponseDTO<NoContentDTO>.Fail(StatusCodes.Status400BadRequest, "Refresh token bulunamadı", true);

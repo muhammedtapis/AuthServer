@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace AuthServer.Core.Configuration
 {
     //bu sınıf appsettingste vereceğimiz client bilgilerini karşılamak için oluşturuldu.
+    //appsettingsteki isimler ile burdaki property isimleri aynı olmayınca MAPLEMİYOR!!!
     public class Client
     {
         public string ClientId { get; set; }

@@ -14,12 +14,12 @@ namespace AuthServer.Core.Services
     {
         Task<ResponseDTO<TokenDTO>> CreateTokenAsync(LoginDTO loginDto);
 
-        Task<ResponseDTO<TokenDTO>> CreateTokenByRefreshTokenAsync(string refreshToken);
+        Task<ResponseDTO<TokenDTO>> CreateTokenByRefreshTokenAsync(RefreshTokenDTO refreshTokenDTO);
 
         //refreshtoken sonlandırması gerekli çünkü refresh token sahip client sürekli access token alabilir
-        Task<ResponseDTO<NoContentDTO>> RevokeRefreshTokenAsync(string refreshToken);
+        Task<ResponseDTO<NoContentDTO>> RevokeRefreshTokenAsync(RefreshTokenDTO refreshTokenDTO);
 
         //clientId ve secret ile oluşturulacak token metot
-        ResponseDTO<ClientTokenDTO> CreateTokenByClientAsync(ClientLoginDTO clientLoginDto);
+        ResponseDTO<ClientTokenDTO> CreateTokenByClient(ClientLoginDTO clientLoginDto);
     }
 }

@@ -32,10 +32,14 @@ namespace AuthServer.Repository.Repositories
         public async Task<TEntity> GetByIdAsync(int id)
         {
             var entity = await _dbSet.FindAsync(id);
-            if (entity != null)
-            {
-                _dbContext.Entry(entity).State = EntityState.Detached; //tracking iptal et
-            }
+            //tracking sorunundna dolayı aşağıdaki kodu iptal ettik update metodunda getbyid çağırdığımızda efcore track ediyor
+            //objectmapperile getbyid metodundan gelen entity ile kullanıcıdan gelen dto mapleniyor böylelikle efcore kendisi state değiştiriyor
+            //update metodu çağırmadan mapleyerek sadece değiştirilen yerlerin üzerine yazıyor efcore.
+
+            //if (entity != null)
+            //{
+            //    //_dbContext.Entry(entity).State = EntityState.Detached; //tracking iptal et
+            //}
             return entity;
         }
 
@@ -44,11 +48,14 @@ namespace AuthServer.Repository.Repositories
             _dbSet.Remove(entity);
         }
 
-        public TEntity Update(TEntity entity)
+        //bu metod task dönmeyince threadi blokluyor servis metodunda iki tane repository metodu çağırıyoruz
+        //getbyid ve update ikisi de aynı dbcontext kullandığı için server error alıyoruz
+        public Task<TEntity> Update(TEntity entity)
         {
             //state değiştir dön tekrar entityyi çünkü dönüş tipi entity istemişiz void olsaydı direkt dbset.update(entity) yapabiliridk.
             _dbContext.Entry(entity).State = EntityState.Modified;
-            return entity;
+            //_dbSet.Update(entity);
+            return Task.FromResult(entity);
         }
 
         public IQueryable<TEntity> Where(System.Linq.Expressions.Expression<Func<TEntity, bool>> predicate)
