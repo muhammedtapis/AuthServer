@@ -20,6 +20,6 @@ namespace AuthServer.Core.Services
         Task<ResponseDTO<NoContentDTO>> RevokeRefreshTokenAsync(string refreshToken);
 
         //clientId ve secret ile oluşturulacak token metot
-        Task<ResponseDTO<ClientTokenDTO>> CreateTokenByClientAsync(ClientLoginDTO clientLoginDto);
+        ResponseDTO<ClientTokenDTO> CreateTokenByClientAsync(ClientLoginDTO clientLoginDto);
     }
 }
