@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SharedLibrary.Configuration;
+using SharedLibrary.Services;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -45,20 +46,32 @@ namespace AuthServer.Service.Services
 
         //private claim oluşturma metodu sadece burada kullanılcak.
 
-        private IEnumerable<Claim> GetClaims(UserApp userApp, List<string> audiences)
+        private async Task<IEnumerable<Claim>> GetClaims(UserApp userApp, List<string> audiences)
         {
+            //rol bazlı yetkilendirme için rol alıyoruz
+            var userRoles = await _userManager.GetRolesAsync(userApp);
+
             //kullanıcının hangi bilgileri claim olarka oluşturulsun onu belirtiyoruz,payloada eklencek claimler
             var userList = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier,userApp.Id), //parametre olarak gelen kullanıcının idsini nameIdentifier olarak bir claim oluştur
                 new Claim(JwtRegisteredClaimNames.Email,userApp.Email),
                 new Claim(ClaimTypes.Name,userApp.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+
+                //claim bazlı yetkilendirme claimtypes ve jwtregistereclaimnamesde bulunmayan değer ekleme
+                new Claim("city",userApp.City),
+
+                //age policy için birthdate claim
+                new Claim(ClaimTypes.DateOfBirth,userApp.BirthDate.ToShortDateString())
             };
 
             //tokenin kendisi ile alakalı claimler
             //her bir audience için tek tek dön ve audience claimi oluşturup userlist ekle audience hangi API lere erişebilir o demek
             userList.AddRange(audiences.Select(x => new Claim(JwtRegisteredClaimNames.Aud, x)));
+
+            //userlroles listesi içinde gezip her bir rolu alıp claim oluştur        "role" : ["admin","manager"]
+            userList.AddRange(userRoles.Select(x => new Claim(ClaimTypes.Role, x)));
 
             return userList;
         }
@@ -93,7 +106,7 @@ namespace AuthServer.Service.Services
                     issuer: _customTokenOptions.Issuer,
                     expires: accessTokenExpiration,
                     notBefore: DateTime.Now,
-                    claims: GetClaims(user, _customTokenOptions.Audience), //tokenda buluncak claimler
+                    claims: GetClaims(user, _customTokenOptions.Audience).Result, //tokenda buluncak claimler
                     signingCredentials: signingCredentials
                 );
 

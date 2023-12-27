@@ -7,11 +7,14 @@ using AuthServer.Repository;
 using AuthServer.Repository.Repositories;
 using AuthServer.Repository.UnitOfWorks;
 using AuthServer.Service.Services;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SharedLibrary.Configuration;
+using SharedLibrary.Extensions;
+using SharedLibrary.Services;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -80,8 +83,15 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.Zero
     };
 });
+//fluentvaliaiton
+builder.Services.AddControllers().AddFluentValidation(options =>
+{
+    options.RegisterValidatorsFromAssemblyContaining<Program>();
+});
 
-builder.Services.AddControllers();
+//biz yazdýk bu ext.  metodu modelstate hatalarýný görebilmek için response gönderiyor.
+builder.Services.UseCustomValidationResponse();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -94,6 +104,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+//custom middleware exception.
+app.UseCustomException();
 
 app.UseHttpsRedirection();
 

@@ -18,9 +18,13 @@ namespace AuthServer.Service.Services
     {
         private readonly UserManager<UserApp> _userManager;
 
-        public UserService(UserManager<UserApp> userManager)
+        //rol ekleme metodu oluşturcağımız için lazım
+        private readonly RoleManager<IdentityRole> _roleManager;
+
+        public UserService(UserManager<UserApp> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public async Task<ResponseDTO<UserAppDTO>> CreateUserAsync(CreateUserDTO createUserDTO)
@@ -36,6 +40,22 @@ namespace AuthServer.Service.Services
             }
 
             return ResponseDTO<UserAppDTO>.Success(StatusCodes.Status201Created, ObjectMapper.Mapper.Map<UserAppDTO>(user));
+        }
+
+        //kullanıcı adı üzerinden rol ekleme
+        public async Task<ResponseDTO<NoContentDTO>> CreateUserRoleAsync(string userName)
+        {
+            if (!await _roleManager.RoleExistsAsync("admin")) //eğer admin rolu yoksa oluştur.
+            {
+                await _roleManager.CreateAsync(new IdentityRole() { Name = "admin" });
+                await _roleManager.CreateAsync(new IdentityRole() { Name = "manager" });
+            }
+
+            var user = await _userManager.FindByNameAsync(userName);
+            await _userManager.AddToRoleAsync(user, "admin");
+            await _userManager.AddToRoleAsync(user, "manager");
+
+            return ResponseDTO<NoContentDTO>.Success(StatusCodes.Status201Created);
         }
 
         public async Task<ResponseDTO<UserAppDTO>> GetUserByNameAsync(string userName)

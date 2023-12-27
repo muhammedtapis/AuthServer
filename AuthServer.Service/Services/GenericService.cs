@@ -78,7 +78,7 @@ namespace AuthServer.Service.Services
             }
             //Map.<source type ,destination type>.(source,destination)
             ObjectMapper.Mapper.Map<TDto, TEntity>(dto, entity);
-            //yeni instance oluşturmadan mevcut entity üzerine yani gtbyid metodundan gelen entity üzerinde değişiklik yaptığımzda saveleyince
+            //yeni instance oluşturmadan mevcut entity üzerine yani getbyid metodundan gelen entity üzerinde değişiklik yaptığımzda saveleyince
             //update edilmiş oluyor.
 
             //eskiden böyle yazıyoduk ama burada tracking sorunu var yukarıdaki gibi yapıp

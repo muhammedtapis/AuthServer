@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AuthServer.Service.Services
+namespace SharedLibrary.Services
 {
     //bu sınıf appsettingsten gelen security keyi simetrik key olarka dönecek onun için oluşturduk tokenserviste kullancaz.
     public static class SignService
